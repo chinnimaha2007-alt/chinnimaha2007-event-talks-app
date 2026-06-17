@@ -253,6 +253,17 @@
         </div>
     </div>
 
+    <!-- Toast Notification Container -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <!-- Floating Back to Top Button -->
+    <button id="back-to-top" class="btn btn-icon-round back-to-top hidden" aria-label="Back to top" title="Scroll back to top">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="19" x2="12" y2="5"></line>
+            <polyline points="5 12 12 5 19 12"></polyline>
+        </svg>
+    </button>
+
     <!-- Main JS Application -->
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 </body>

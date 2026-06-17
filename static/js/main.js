@@ -29,6 +29,38 @@ document.addEventListener('DOMContentLoaded', () => {
     const offlineMessage = document.getElementById('offline-message');
     const closeAlertBtn = document.getElementById('close-alert-btn');
     const clearSearchBtn = document.getElementById('clear-search-btn');
+    const backToTopBtn = document.getElementById('back-to-top');
+
+    /* ==========================================================================
+       Toast Alert System (UX Improvement)
+       ========================================================================== */
+    const showToast = (message, type = 'info') => {
+        const container = document.getElementById('toast-container');
+        if (!container) return;
+
+        const toast = document.createElement('div');
+        toast.className = `toast toast-${type}`;
+
+        let iconSvg = '';
+        if (type === 'success') {
+            iconSvg = `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="var(--color-feature)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
+        } else if (type === 'error') {
+            iconSvg = `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="var(--danger-color)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>`;
+        } else {
+            iconSvg = `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="var(--accent-color)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>`;
+        }
+
+        toast.innerHTML = `
+            ${iconSvg}
+            <span>${message}</span>
+        `;
+        container.appendChild(toast);
+
+        // Automatically remove after 3.5 seconds
+        setTimeout(() => {
+            toast.remove();
+        }, 3500);
+    };
 
     // Metrics DOM Elements
     const statTotal = document.getElementById('stat-total');
@@ -373,6 +405,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     copyBtn.classList.add('copied');
                     copySvg.classList.add('hidden');
                     checkSvg.classList.remove('hidden');
+                    
+                    showToast("Release notes copied to clipboard!", "success");
 
                     setTimeout(() => {
                         copyBtn.classList.remove('copied');
@@ -381,6 +415,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     }, 2000);
                 }).catch(err => {
                     console.error('Failed to copy to clipboard:', err);
+                    showToast("Failed to copy to clipboard.", "error");
                 });
             });
 
@@ -406,17 +441,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     </button>
                 `;
 
-                // Event Listener to select update and open tweet composer
-                const triggerComposer = (e) => {
-                    // Prevent trigger if they somehow clicked inside links or code (allow copying text)
-                    if (e.target.tagName === 'A') return;
-
+                // Event Listener to select update and open tweet composer (only on button click)
+                const tweetBtn = updateRow.querySelector('.tweet-row-action');
+                tweetBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
                     selectedUpdateText = update.text;
                     selectedUpdateDate = entry.rawDateString || entry.formattedDay;
                     openTweetComposer();
-                };
-
-                updateRow.addEventListener('click', triggerComposer);
+                });
                 cardBody.appendChild(updateRow);
             });
 
@@ -681,9 +713,26 @@ document.addEventListener('DOMContentLoaded', () => {
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
+        
+        showToast("CSV exported successfully!", "success");
     };
 
     exportCsvBtn.addEventListener('click', exportToCSV);
+
+    /* ==========================================================================
+       Scroll & Back to Top Handlers (UX Improvement)
+       ========================================================================== */
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 300) {
+            backToTopBtn.classList.remove('hidden');
+        } else {
+            backToTopBtn.classList.add('hidden');
+        }
+    });
+
+    backToTopBtn.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
 
     /* ==========================================================================
        App Initialization
