@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>BigQuery release notes</title>
+  <updated>2026-06-17T08:00:00Z</updated>
+  <id>tag:google.com,2010:bigquery-release-notes</id>
+  <link rel="alternate" href="https://cloud.google.com/bigquery/docs/release-notes" type="text/html"/>
+  
+  <entry>
+    <title>BigQuery release notes: June 15, 2026</title>
+    <id>tag:google.com,2010:bigquery-release-notes:2026-06-15</id>
+    <updated>2026-06-15T18:30:00Z</updated>
+    <published>2026-06-15T18:30:00Z</published>
+    <link rel="alternate" href="https://cloud.google.com/bigquery/docs/release-notes#June_15_2026" type="text/html"/>
+    <content type="html">&lt;p&gt;&lt;strong&gt;Feature:&lt;/strong&gt; BigQuery Studio now supports integrated AI-assisted code generation and explanation powered by Gemini 1.5 Pro. This capability is now generally available (GA). You can use it to generate SQL queries, explain complex joins, and optimize performance directly inside the SQL editor.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Change:&lt;/strong&gt; The default workspace directory structure in BigQuery Studio has been updated to organize SQL scripts and notebook files into separate folders for improved navigation.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Fix:&lt;/strong&gt; Resolved a minor memory leak in BigQuery Studio notebooks when visualizing large query result sets with over 100,000 rows.&lt;/p&gt;</content>
+  </entry>
+
+  <entry>
+    <title>BigQuery release notes: June 10, 2026</title>
+    <id>tag:google.com,2010:bigquery-release-notes:2026-06-10</id>
+    <updated>2026-06-10T12:00:00Z</updated>
+    <published>2026-06-10T12:00:00Z</published>
+    <link rel="alternate" href="https://cloud.google.com/bigquery/docs/release-notes#June_10_2026" type="text/html"/>
+    <content type="html">&lt;p&gt;&lt;strong&gt;Feature:&lt;/strong&gt; BigQuery now supports &lt;code&gt;CREATE OR REPLACE EXTERNAL TABLE&lt;/code&gt; syntax for Apache Iceberg tables. This simplifies the workflow for updating table schemas without dropping and recreating the tables.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Deprecation:&lt;/strong&gt; Support for legacy SQL JSON functions &lt;code&gt;JSON_EXTRACT_SCALAR&lt;/code&gt; and &lt;code&gt;JSON_EXTRACT&lt;/code&gt; in nested subqueries will be deprecated on December 31, 2026. Users are encouraged to migrate to standard SQL JSON query functions like &lt;code&gt;JSON_VALUE&lt;/code&gt; and &lt;code&gt;JSON_QUERY&lt;/code&gt;.&lt;/p&gt;</content>
+  </entry>
+
+  <entry>
+    <title>BigQuery release notes: June 03, 2026</title>
+    <id>tag:google.com,2010:bigquery-release-notes:2026-06-03</id>
+    <updated>2026-06-03T10:15:00Z</updated>
+    <published>2026-06-03T10:15:00Z</published>
+    <link rel="alternate" href="https://cloud.google.com/bigquery/docs/release-notes#June_03_2026" type="text/html"/>
+    <content type="html">&lt;p&gt;&lt;strong&gt;Feature:&lt;/strong&gt; Cross-region dataset replication for disaster recovery is now generally available (GA) in the Europe (Frankfurt) and Europe (London) regions.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Fix:&lt;/strong&gt; Fixed a performance regression where queries referencing clustered tables with specific datetime ranges were not properly pruning partitions.&lt;/p&gt;</content>
+  </entry>
+
+  <entry>
+    <title>BigQuery release notes: May 28, 2026</title>
+    <id>tag:google.com,2010:bigquery-release-notes:2026-05-28</id>
+    <updated>2026-05-28T14:15:00Z</updated>
+    <published>2026-05-28T14:15:00Z</published>
+    <link rel="alternate" href="https://cloud.google.com/bigquery/docs/release-notes#May_28_2026" type="text/html"/>
+    <content type="html">&lt;p&gt;&lt;strong&gt;Feature:&lt;/strong&gt; Customer-managed encryption keys (CMEK) are now supported for BigQuery Omni queries running in AWS and Azure. This allows you to encrypt temporary query results in those clouds using your own keys.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Change:&lt;/strong&gt; Increased the maximum concurrent queries limit for enterprise reservation slots from 100 to 200 per project to support larger BI dashboards.&lt;/p&gt;</content>
+  </entry>
+</feed>
