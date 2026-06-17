@@ -998,3 +998,133 @@ body.dark-theme .update-row code {
         grid-column: span 2;
     }
 }
+
+/* Custom Theme Switch Slider */
+.theme-switch-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background-color: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    padding: 6px 12px;
+    border-radius: var(--border-radius-full);
+    transition: border-color var(--transition-normal);
+}
+
+.theme-slider-switch {
+    position: relative;
+    display: inline-block;
+    width: 40px;
+    height: 20px;
+    flex-shrink: 0;
+}
+
+.theme-slider-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.theme-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--border-hover);
+    transition: var(--transition-normal);
+    border-radius: 20px;
+}
+
+.theme-slider:before {
+    position: absolute;
+    content: "";
+    height: 14px;
+    width: 14px;
+    left: 3px;
+    bottom: 3px;
+    background-color: #ffffff;
+    transition: var(--transition-normal);
+    border-radius: 50%;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+input:checked + .theme-slider {
+    background-color: var(--accent-color);
+}
+
+input:checked + .theme-slider:before {
+    transform: translateX(20px);
+}
+
+.sun-icon-svg {
+    color: #f59e0b; /* Amber */
+    transition: transform var(--transition-normal);
+}
+
+.moon-icon-svg {
+    color: #94a3b8; /* Muted slate */
+    transition: color var(--transition-normal), transform var(--transition-normal);
+}
+
+body.dark-theme .moon-icon-svg {
+    color: #38bdf8; /* Soft cyan-blue */
+    filter: drop-shadow(0 0 3px rgba(56, 189, 248, 0.4));
+}
+
+body:not(.dark-theme) .sun-icon-svg {
+    filter: drop-shadow(0 0 3px rgba(245, 158, 11, 0.4));
+}
+
+/* CSV and Feed Header Actions Layout */
+.feed-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.btn-sm {
+    padding: 6px 12px;
+    font-size: 12px;
+    border-radius: var(--border-radius-sm);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* Card Header Action Buttons */
+.card-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.card-copy-btn {
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border-radius: var(--border-radius-full);
+    border: 1px solid var(--border-color);
+    background: none;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.card-copy-btn:hover {
+    background-color: var(--hover-bg);
+    border-color: var(--border-hover);
+    color: var(--text-primary);
+    transform: scale(1.05);
+}
+
+.card-copy-btn.copied {
+    background-color: var(--color-feature-bg);
+    border-color: var(--color-feature);
+    color: var(--color-feature);
+}
+

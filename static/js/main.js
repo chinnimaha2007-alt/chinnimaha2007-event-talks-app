@@ -12,7 +12,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let activeHashtags = ['#BigQuery', '#GoogleCloud', '#GCP'];
 
     // DOM Elements
-    const themeToggle = document.getElementById('theme-toggle');
+    const themeCheckbox = document.getElementById('theme-checkbox');
+    const exportCsvBtn = document.getElementById('export-csv-btn');
     const refreshBtn = document.getElementById('refresh-btn');
     const refreshIcon = document.getElementById('refresh-icon');
     const searchInput = document.getElementById('search-input');
@@ -47,21 +48,27 @@ document.addEventListener('DOMContentLoaded', () => {
     const modalTagSuggestions = document.querySelector('.modal-tag-suggestions');
 
     /* ==========================================================================
-       Theme Management (Light / Dark Mode)
+       Theme Management (Light / Dark Mode via slider toggle)
        ========================================================================== */
     const initializeTheme = () => {
         const savedTheme = localStorage.getItem('theme');
         if (savedTheme === 'light') {
             document.body.classList.remove('dark-theme');
+            themeCheckbox.checked = false;
         } else {
             document.body.classList.add('dark-theme'); // default is dark
+            themeCheckbox.checked = true;
         }
     };
 
-    themeToggle.addEventListener('click', () => {
-        document.body.classList.toggle('dark-theme');
-        const isDark = document.body.classList.contains('dark-theme');
-        localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    themeCheckbox.addEventListener('change', () => {
+        if (themeCheckbox.checked) {
+            document.body.classList.add('dark-theme');
+            localStorage.setItem('theme', 'dark');
+        } else {
+            document.body.classList.remove('dark-theme');
+            localStorage.setItem('theme', 'light');
+        }
     });
 
     /* ==========================================================================
@@ -329,14 +336,53 @@ document.addEventListener('DOMContentLoaded', () => {
                     <span class="day-name">${entry.formattedDay}</span>
                     <span class="raw-date">${entry.rawDateString}</span>
                 </div>
-                <a href="${entry.link}" target="_blank" rel="noopener noreferrer" class="card-link" title="Open official release notes page">
-                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-                        <polyline points="15 3 21 3 21 9"></polyline>
-                        <line x1="10" y1="14" x2="21" y2="3"></line>
-                    </svg>
-                </a>
+                <div class="card-header-actions">
+                    <button class="card-copy-btn" title="Copy this card's release notes to clipboard" aria-label="Copy release notes">
+                        <svg class="copy-svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                        </svg>
+                        <svg class="check-svg hidden" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                    </button>
+                    <a href="${entry.link}" target="_blank" rel="noopener noreferrer" class="card-link" title="Open official release notes page">
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                            <polyline points="15 3 21 3 21 9"></polyline>
+                            <line x1="10" y1="14" x2="21" y2="3"></line>
+                        </svg>
+                    </a>
+                </div>
             `;
+
+            // Bind Card Copy Action
+            const copyBtn = cardHeader.querySelector('.card-copy-btn');
+            const copySvg = copyBtn.querySelector('.copy-svg');
+            const checkSvg = copyBtn.querySelector('.check-svg');
+
+            copyBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                
+                let copyText = `BigQuery Release Notes - ${entry.formattedDay}\n`;
+                entry.updates.forEach(u => {
+                    copyText += `\n- [${u.category.toUpperCase()}] ${u.text}`;
+                });
+
+                navigator.clipboard.writeText(copyText).then(() => {
+                    copyBtn.classList.add('copied');
+                    copySvg.classList.add('hidden');
+                    checkSvg.classList.remove('hidden');
+
+                    setTimeout(() => {
+                        copyBtn.classList.remove('copied');
+                        copySvg.classList.remove('hidden');
+                        checkSvg.classList.add('hidden');
+                    }, 2000);
+                }).catch(err => {
+                    console.error('Failed to copy to clipboard:', err);
+                });
+            });
 
             const cardBody = document.createElement('div');
             cardBody.className = 'card-body';
@@ -592,6 +638,52 @@ document.addEventListener('DOMContentLoaded', () => {
         window.open(twitterIntentUrl, '_blank', 'noopener,noreferrer');
         closeTweetComposer();
     });
+
+    // CSV Export Handler
+    const exportToCSV = () => {
+        const filtered = allNotes.map(entry => {
+            const matchingUpdates = entry.updates.filter(update => {
+                const matchesCategory = (activeFilter === 'all' || update.category === activeFilter);
+                const matchesSearch = !searchQuery || 
+                    update.text.toLowerCase().includes(searchQuery) ||
+                    entry.formattedDay.toLowerCase().includes(searchQuery);
+                return matchesCategory && matchesSearch;
+            });
+            return { ...entry, updates: matchingUpdates };
+        }).filter(entry => entry.updates.length > 0);
+
+        if (filtered.length === 0) {
+            alert("No release notes available to export under current filters.");
+            return;
+        }
+
+        let csvRows = [];
+        // Header
+        csvRows.push("Date,Category,Update Text");
+
+        filtered.forEach(entry => {
+            const dateStr = entry.rawDateString || entry.formattedDay;
+            entry.updates.forEach(update => {
+                // Escape quotes and remove newlines
+                const cleanText = update.text.replace(/"/g, '""').replace(/\r?\n|\r/g, " ");
+                csvRows.push(`"${dateStr}","${update.category}","${cleanText}"`);
+            });
+        });
+
+        const csvString = csvRows.join("\n");
+        const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        
+        const link = document.createElement("a");
+        link.setAttribute("href", url);
+        link.setAttribute("download", `bigquery_release_notes_${activeFilter}_export.csv`);
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
+
+    exportCsvBtn.addEventListener('click', exportToCSV);
 
     /* ==========================================================================
        App Initialization
